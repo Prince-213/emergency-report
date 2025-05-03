@@ -1,122 +1,96 @@
-"use client"
+"use client";
 
-import type React from "react"
+import { createStudent } from "@/lib/actions";
+import { useActionState, useEffect } from "react";
+import { toast } from "sonner";
 
-import { useState } from "react"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
-import { AlertCircle } from "lucide-react"
-import Link from "next/link"
-import { useRouter } from "next/navigation"
+const initialState = {
+  message: ""
+};
+export default function Random() {
+  const [state, formAction, pending] = useActionState(
+    createStudent,
+    initialState
+  );
 
-export default function RegisterPage() {
-  const [formData, setFormData] = useState({
-    name: "",
-    email: "",
-    regNo: "",
-    department: "",
-    password: "",
-    confirmPassword: "",
-  })
-  const [error, setError] = useState("")
-  const router = useRouter()
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target
-    setFormData((prev) => ({ ...prev, [name]: value }))
-  }
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setError("")
-
-    // Basic validation
-    if (Object.values(formData).some((val) => !val)) {
-      setError("Please fill in all fields")
-      return
+  useEffect(() => {
+    if (state.message == "success") {
+      toast.success("Accound created");
+    } else if (state.message == "unsuccess") {
+      toast.error("Invalid credentials");
     }
-
-    if (formData.password !== formData.confirmPassword) {
-      setError("Passwords do not match")
-      return
-    }
-
-    // In a real app, you would send this data to your API
-    // For demo purposes, we'll just redirect to login
-    router.push("/login")
-  }
+  }, [state]);
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-muted p-4">
-      <Card className="w-full max-w-md">
-        <CardHeader className="space-y-1">
-          <CardTitle className="text-2xl font-bold text-center text-primary">Create an Account</CardTitle>
-          <CardDescription className="text-center">Register to use the campus emergency system</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <form onSubmit={handleSubmit}>
-            <div className="grid gap-4">
-              {error && (
-                <div className="bg-destructive/10 p-3 rounded-md flex items-center gap-2 text-sm text-destructive">
-                  <AlertCircle className="h-4 w-4" />
-                  <p>{error}</p>
-                </div>
-              )}
-              <div className="grid gap-2">
-                <Label htmlFor="name">Full Name</Label>
-                <Input id="name" name="name" value={formData.name} onChange={handleChange} />
-              </div>
-              <div className="grid gap-2">
-                <Label htmlFor="email">Email</Label>
-                <Input id="email" name="email" type="email" value={formData.email} onChange={handleChange} />
-              </div>
-              <div className="grid grid-cols-2 gap-4">
-                <div className="grid gap-2">
-                  <Label htmlFor="regNo">Registration Number</Label>
-                  <Input id="regNo" name="regNo" value={formData.regNo} onChange={handleChange} />
-                </div>
-                <div className="grid gap-2">
-                  <Label htmlFor="department">Department</Label>
-                  <Input id="department" name="department" value={formData.department} onChange={handleChange} />
-                </div>
-              </div>
-              <div className="grid gap-2">
-                <Label htmlFor="password">Password</Label>
-                <Input
-                  id="password"
-                  name="password"
-                  type="password"
-                  value={formData.password}
-                  onChange={handleChange}
-                />
-              </div>
-              <div className="grid gap-2">
-                <Label htmlFor="confirmPassword">Confirm Password</Label>
-                <Input
-                  id="confirmPassword"
-                  name="confirmPassword"
-                  type="password"
-                  value={formData.confirmPassword}
-                  onChange={handleChange}
-                />
-              </div>
-              <Button type="submit" className="w-full bg-primary hover:bg-primary/90">
-                Register
-              </Button>
-            </div>
-          </form>
-        </CardContent>
-        <CardFooter>
-          <p className="text-sm text-center w-full text-muted-foreground">
-            Already have an account?{" "}
-            <Link href="/login" className="text-primary hover:underline">
-              Sign in
-            </Link>
-          </p>
-        </CardFooter>
-      </Card>
-    </div>
-  )
+    <main className="min-h-screen w-full bg-white">
+      <div className="h-screen">
+        <div className="w-[90%] mx-auto pt-10  flex flex-col items-center">
+          {/* Header */}
+
+          {/* Body */}
+          <div className="">
+            <h1 className={"text-xl text-center font-light"}>
+              Add a Student to the Database !
+            </h1>
+          </div>
+
+          <div className=" flex flex-col justify-center mt-10">
+            <form method="POST" action={formAction} className=" space-y-6">
+              <input
+                type="email"
+                className=" w-full h-[50px] border-2 bg-transparent outline-none border-gray-600 px-4 py-2 "
+                placeholder="Enter student email address"
+                name="email"
+                defaultValue={""}
+              />
+              <input
+                type="password"
+                className=" w-full h-[50px] border-2 bg-transparent outline-none border-gray-600 px-4 py-2 "
+                placeholder="Enter password"
+                name="password"
+                defaultValue={""}
+              />
+              <input
+                type="text"
+                className=" w-full h-[50px] border-2 bg-transparent outline-none border-gray-600 px-4 py-2 "
+                placeholder="Enter student Reg No."
+                name="reg"
+                defaultValue={""}
+              />
+              <input
+                type="text"
+                className=" w-full h-[50px] border-2 bg-transparent outline-none border-gray-600 px-4 py-2 "
+                placeholder="Enter student Name"
+                name="name"
+                defaultValue={""}
+              />
+              <select
+                name="gender"
+                className=" w-full h-[50px] border-2 bg-transparent outline-none border-gray-600 px-4 py-2"
+              >
+                <option value={"male"}>Male</option>
+                <option value="female">Female</option>
+              </select>
+              <input
+                type="text"
+                className=" w-full h-[50px] border-2 bg-transparent outline-none border-gray-600 px-4 py-2 "
+                placeholder="Student Medical condition (optional)"
+                name="medical"
+                defaultValue={""}
+              />
+
+              <button className=" bg-black mt-5 text-white flex items-center justify-center w-full py-5">
+                <p>{pending ? "Creating student ..." : "Submit"}</p>
+              </button>
+            </form>
+          </div>
+        </div>
+
+        <footer className=" w-[90%] mx-auto pt-5 text-center border-t-2 mt-20">
+          <p>Call 234 987766344 </p>
+          <p>To contact emergency services </p>
+        </footer>
+      </div>
+    </main>
+  );
 }
